@@ -1,0 +1,57 @@
+gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: '#gl_host'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://#gl_host'
+        gitlab_rails['gitlab_shell_ssh_port'] = #gl_ssh_port
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '#gl_http_port:80'
+      - '#gl_https_port:443'
+      - '#gl_ssh_port:22'
+    volumes:
+      - './gitlab/conf:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+
+jenkins:
+  image: 'jenkins/jenkins:lts'
+  restart: always
+  links:
+    - gitlab:#gl_host
+    - sonarqube:#sonar_host
+  #environment:
+      # Add any other gitlab.rb configuration here, each on its own line
+  ports:
+    - '#jk_http_port:8080'
+    - '#jk_50k_port:50000'
+  volumes:
+    - './jenkins/data:/var/jenkins_home'
+sonarqube:
+  image: sonarqube:lts
+  restart: always
+  links:
+   - db:db
+  environment:
+    - SONAR_JDBC_URL=jdbc:mysql://db/#sonar_db?useUnicode=true&characterEncoding=UTF-8
+    - SONAR_JDBC_USERNAME=root
+    - SONAR_JDBC_PASSWORD=#sonar_db_pwd
+      # Add any other gitlab.rb configuration here, each on its own line
+  ports:
+    - '#sonar_port:9000'
+  volumes:
+    - './sonarqube/data:/opt/sonarqube/data'
+    - './sonarqube/logs:/opt/sonarqube/logs'
+    - './sonarqube/conf:/opt/sonarqube/conf'
+    - './sonarqube/extensions:/opt/sonarqube/extensions'
+db:
+  image: mysql
+  command: --default-authentication-plugin=mysql_native_password
+  restart: always
+  ports:
+    - '3316:3306'
+  environment:
+    MYSQL_DATABASE: #sonar_db
+    MYSQL_ROOT_PASSWORD: #sonar_db_pwd    

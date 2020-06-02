@@ -1,0 +1,9 @@
+*/data/*
+gitlab/conf/*
+*/extensions/*
+*.log
+.DS_Store
+**/.DS_Store
+*/logs/*
+docker-compose.yml
+env

@@ -1,0 +1,60 @@
+gitlab:
+    image: 'gitlab/gitlab-ce:latest'
+    restart: always
+    hostname: '#gl_host'
+    environment:
+      GITLAB_OMNIBUS_CONFIG: |
+        external_url 'http://#gl_host'
+        gitlab_rails['gitlab_shell_ssh_port'] = #gl_ssh_port
+        # Add any other gitlab.rb configuration here, each on its own line
+    ports:
+      - '#gl_http_port:80'
+      - '#gl_https_port:443'
+      - '#gl_ssh_port:22'
+    volumes:
+      - './gitlab/conf:/etc/gitlab'
+      - './gitlab/logs:/var/log/gitlab'
+      - './gitlab/data:/var/opt/gitlab'
+
+jenkins:
+  image: 'jenkins/jenkins:lts'
+  restart: always
+  links:
+    - gitlab:#gl_host
+    - sonarqube:#sonar_host
+  #environment:
+      # Add any other gitlab.rb configuration here, each on its own line
+  ports:
+    - '#jk_http_port:8080'
+    - '#jk_50k_port:50000'
+  volumes:
+    - './jenkins/data:/var/jenkins_home'
+sonarqube:
+  image: sonarqube
+  restart: always
+  links:
+   - db:db
+  environment:
+    - SONAR_JDBC_URL=jdbc:postgresql://db/#sonar_db
+    - SONAR_JDBC_USERNAME=root
+    - SONAR_JDBC_PASSWORD=#sonar_db_pwd
+      # Add any other gitlab.rb configuration here, each on its own line
+  ports:
+    - '#sonar_port:9000'
+  volumes:
+    - './sonarqube8/data:/opt/sonarqube/data'
+    - './sonarqube8/logs:/opt/sonarqube/logs'
+    - './sonarqube8/conf:/opt/sonarqube/conf'
+    - './sonarqube8/extensions:/opt/sonarqube/extensions'
+db:
+  image: postgres
+  restart: always
+  ports:
+    - '3316:3306'
+  volumes:
+    - './postgres/data:/var/lib/postgresql/data/pgdata'  
+  environment:
+    PGDATA: /var/lib/postgresql/data/pgdata
+    POSTGRES_PASSWORD: #sonar_db_pwd
+    POSTGRES_USER: root
+    POSTGRES_DB: #sonar_db
