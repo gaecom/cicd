@@ -5,6 +5,7 @@
 ```
 ### 使用方法
 1. 配置env.temp参数
+> 默认使用自定义的阿里云镜像加快下载以及解决国外资源无法访问的问题
 2. 运行
 ```bash
 #自定义docker-compose.yml文件,让sonarqube使用H2，还是使用mysql或者pg
