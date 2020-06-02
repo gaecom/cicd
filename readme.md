@@ -4,7 +4,7 @@
 ./r 
 ```
 ### 使用方法
-1. 配置env参数
+1. 配置env.temp参数
 2. 运行
 ```bash
 #自定义docker-compose.yml文件,让sonarqube使用H2，还是使用mysql或者pg

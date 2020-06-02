@@ -29,8 +29,9 @@ usage[lf]="logs following ci/cd"
 i(){
    #sed  -e "s/#gl_host/g.cc/" -e "s/#gl_http_port/$gl_http_port/" -e "s/#gl_https_port/$gl_https_port/" -e "s/#gl_host/g.cc/" -e "s/#gl_host/g.cc/" -e "s/#gl_host/g.cc/"  docker-compose.temp.yml > docker-compose.yml
    
-  2>&1 mkdir -p {postgres,mysql,postgres,sonarqube,sonarqube8}/{data,conf,logs,extensions} >/dev/null
+   2>&1 mkdir -p {postgres,mysql,postgres,sonarqube,sonarqube8}/{data,conf,logs,extensions} >/dev/null
 
+   cp -Rf env.temp env
    python -Bc "import ifuncs as i;import sys;i.replace(sys.argv[1])" ${1:-""}
 
 }
