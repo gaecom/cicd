@@ -10,6 +10,8 @@
 #自定义docker-compose.yml文件,让sonarqube使用H2，还是使用mysql或者pg
 #生产环境建议不要使用H2仓库，参数空则默认使用H2
 ./r i [pg|mysql]或者空
+## 启动docker-compose
+docker-compose up -d 
 ```
 
 ### 发布一个精简的版本,不包含数据,在dist目录下
